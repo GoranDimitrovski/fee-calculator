@@ -7,7 +7,7 @@ namespace Lendable\Interview\Interpolation\Exception;
 use InvalidArgumentException;
 use Lendable\Interview\Interpolation\Model\LoanApplication;
 
-class LoanValue extends InvalidArgumentException
+class LoanValueException extends InvalidArgumentException
 {
     public static function isAboveMax(float $loanValue): static
     {

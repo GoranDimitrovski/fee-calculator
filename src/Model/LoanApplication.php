@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Lendable\Interview\Interpolation\Model;
 
-use Lendable\Interview\Interpolation\Exception\LoanValue;
-use Lendable\Interview\Interpolation\Exception\TermValue;
+use Lendable\Interview\Interpolation\Exception\LoanValueException;
+use Lendable\Interview\Interpolation\Exception\TermValueException;
 
 /**
  * A cut down version of a loan application containing
@@ -34,7 +34,7 @@ class LoanApplication
     private function setTerm(int $term): self
     {
         if (!in_array($term, [self::TERM_MIN, self::TERM_MAX])) {
-            throw  TermValue::isNotValid($term);
+            throw  TermValueException::isNotValid($term);
         }
 
         $this->term = $term;
@@ -54,11 +54,11 @@ class LoanApplication
     private function setAmount(float $amount): self
     {
         if ($amount > self::LOAN_MAX) {
-            throw  LoanValue::isAboveMax($amount);
+            throw  LoanValueException::isAboveMax($amount);
         }
 
         if ($amount < self::LOAN_MIN) {
-            throw  LoanValue::isBellowMin($amount);
+            throw  LoanValueException::isBellowMin($amount);
         }
 
         $this->amount = $amount;

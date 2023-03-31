@@ -6,7 +6,7 @@ namespace Lendable\Interview\Interpolation\Exception;
 
 use InvalidArgumentException;
 
-class TermValue extends InvalidArgumentException
+class TermValueException extends InvalidArgumentException
 {
     public static function isNotValid(int $term): static
     {

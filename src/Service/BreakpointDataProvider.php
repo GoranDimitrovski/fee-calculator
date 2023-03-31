@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Lendable\Interview\Interpolation\Service;
 
 
-use Lendable\Interview\Interpolation\Exception\File;
-use Lendable\Interview\Interpolation\Exception\TermValue;
+use Lendable\Interview\Interpolation\Exception\FileException;
+use Lendable\Interview\Interpolation\Exception\TermValueException;
+use Lendable\Interview\Interpolation\Model\Breakpoint;
+use Lendable\Interview\Interpolation\Model\BreakpointsCollection;
 
 class BreakpointDataProvider implements BreakpointDataProviderInterface
 {
@@ -19,26 +21,35 @@ class BreakpointDataProvider implements BreakpointDataProviderInterface
         $this->map($filePath);
     }
 
-    public function getBreakpointsForTerm(int $term): array
+    public function getBreakpointsForTerm(int $term): BreakpointsCollection
     {
-        return $this->breakpoints[$term] ?? throw TermValue::isNotValid($term);
+        return $this->breakpoints[$term] ?? throw TermValueException::isNotValid($term);
     }
 
     /**
-     * @param string $filePath
-     * @return void
-     * @throws File
+     * @throws FileException
      */
     protected function map(string $filePath): void
     {
         if (!file_exists($filePath)) {
-            throw File::notExists($filePath);
+            throw FileException::notExists($filePath);
         }
 
-        $this->breakpoints = json_decode(file_get_contents($filePath), true);
+        $breakpointData = json_decode(file_get_contents($filePath), true);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw File::isNotValid($filePath);
+            throw FileException::isNotValid($filePath);
+        }
+
+        foreach ($breakpointData as $term => $termBreakpoints) {
+            $breakpointCollection = new BreakpointsCollection();
+
+            foreach ($termBreakpoints as $amount => $fee) {
+                $breakpoint = new Breakpoint($amount, $fee);
+                $breakpointCollection->addValue($breakpoint);
+            }
+
+            $this->breakpoints[$term] = $breakpointCollection;
         }
     }
 }

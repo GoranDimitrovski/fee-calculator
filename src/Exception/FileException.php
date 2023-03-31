@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Lendable\Interview\Interpolation\Exception;
 
-class File extends \Exception
+use Exception;
+
+class FileException extends Exception
 {
     public static function notExists(string $filePath): static
     {
